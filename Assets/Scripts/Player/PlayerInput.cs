@@ -8,11 +8,14 @@ public class PlayerInput : MonoBehaviour
     [SerializeField] private CinemachineCamera cinemachineCamera;
     [SerializeField] private float keyboardPanSpeed = 5f;
     [SerializeField] private float zoomSpeed = 1f;
+    [SerializeField] private float rotationSpeed = 1f;
     [SerializeField] private float minZoomDistance = 7.5f;
 
     private CinemachineFollow cinemachineFollow;
     private float zoomStartTime;
+    private float rotationStartTime;
     private Vector3 startingFollowOffset;
+    private float maxRotationAmount;
 
     private void Awake()
     {
@@ -22,12 +25,74 @@ public class PlayerInput : MonoBehaviour
         }
 
         startingFollowOffset = cinemachineFollow.FollowOffset;
+
+        // Should be 8 as in the initial value on the inspector (Follow Offset)
+        maxRotationAmount = Mathf.Abs(cinemachineFollow.FollowOffset.z);
     }
 
     private void Update()
     {
         HandlePanning();
         HandleZooming();
+        HandleRotation();
+    }
+
+    private void HandleRotation()
+    {
+        if (ShouldSetRotationStartTime())
+        {
+            rotationStartTime = Time.time;
+        }
+        //rotationStartTime will be captured when key is pressed/released
+        //Time will keep increasing which result in the rotationTime increasing as well, rotationSpeed will multiply this
+        float rotationTime = Mathf.Clamp01((Time.time - rotationStartTime) * rotationSpeed);
+
+        //Debug.Log("Time : " +  Time.time + " Rotation Start Time : " + rotationStartTime);
+        //Debug.Log("Rotation Time : " + rotationTime);
+
+        Vector3 targetFollowOffset;
+
+        if (Keyboard.current.pageDownKey.isPressed)
+        {
+            targetFollowOffset = new Vector3(
+                maxRotationAmount,
+                cinemachineFollow.FollowOffset.y,
+                0
+            );
+        }
+        else if (Keyboard.current.pageUpKey.isPressed)
+        {
+            targetFollowOffset = new Vector3(
+                -maxRotationAmount,
+                cinemachineFollow.FollowOffset.y,
+                0
+            );
+        }
+        else
+        {
+            //The fix for the follow offset z is here. 
+            //Will always go to -8 if no end or page up/down key is pressed
+            targetFollowOffset = new Vector3(
+                startingFollowOffset.x,
+                cinemachineFollow.FollowOffset.y,
+                startingFollowOffset.z
+            );
+        }
+
+        cinemachineFollow.FollowOffset = Vector3.Slerp(
+            cinemachineFollow.FollowOffset,
+            targetFollowOffset,
+            rotationTime
+        );
+
+    }
+
+    private bool ShouldSetRotationStartTime()
+    {
+        return Keyboard.current.pageUpKey.wasPressedThisFrame
+                || Keyboard.current.pageDownKey.wasPressedThisFrame
+                || Keyboard.current.pageUpKey.wasReleasedThisFrame
+                || Keyboard.current.pageDownKey.wasReleasedThisFrame;
     }
 
     private void HandleZooming()
