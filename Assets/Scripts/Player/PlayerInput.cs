@@ -6,7 +6,7 @@ namespace GameDevTV.RTS.Player
 {
     public class PlayerInput : MonoBehaviour
     {
-        [SerializeField] private Transform cameraTarget;
+        [SerializeField] private Rigidbody cameraTarget;
         [SerializeField] private CinemachineCamera cinemachineCamera;
         [SerializeField] private CameraConfig cameraConfig;
 
@@ -141,9 +141,9 @@ namespace GameDevTV.RTS.Player
             Vector2 moveAmount = GetKeyboardMoveAmount();
             moveAmount += GetMouseMoveAmount();
 
-            moveAmount *= Time.deltaTime;
-            cameraTarget.position +=
-                new Vector3(moveAmount.x, 0f, moveAmount.y);
+            //It seems that linearVelocity doesnt need Time.deltaTime as it is already applied in the physics engine.
+            //moveAmount *= Time.deltaTime;
+            cameraTarget.linearVelocity = new Vector3(moveAmount.x, 0, moveAmount.y);
         }
 
         private Vector2 GetMouseMoveAmount()
