@@ -3,3 +3,7 @@
 - Adjust CinemachineCamera when following a target. RTS should have a top down view so increase the Y. 
 - Binding Mode is using Lock To Target With World Up to prevent the camera from rotating when the target rotates.
 - Cinemachine Rotation Composer controls the camera rotation and can be used when selecting it on the rotation control.
+1.8 :
+- We can adjust the follow offset on CinemachineFollow to zoom in and out 
+- Slerp are similar to Lerp. instead of moving to a target linearly, it moves in a spherical way. 
+This is used for zoooming in and out of the camera.

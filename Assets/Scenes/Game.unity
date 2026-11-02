@@ -3956,7 +3956,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5144957, y: -0.000000008918654, z: 0.000000005351191, w: 0.857493}
+  m_LocalRotation: {x: 0.5144957, y: 0.000000018994484, z: -0.000000011396689, w: 0.857493}
   m_LocalPosition: {x: 11, y: 15, z: -67.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4053,7 +4053,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInput
   cameraTarget: {fileID: 725674694}
+  cinemachineCamera: {fileID: 976806753}
   keyboardPanSpeed: 15
+  zoomSpeed: 1
+  minZoomDistance: 7.5
 --- !u!1001 &332197402
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11732,7 +11735,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 976806752}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5144957, y: -0.000000021214836, z: 0.000000025844836, w: 0.85749304}
+  m_LocalRotation: {x: 0.5144957, y: 0.000000018994484, z: -0.000000011396688, w: 0.857493}
   m_LocalPosition: {x: 11, y: 15, z: -67.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
