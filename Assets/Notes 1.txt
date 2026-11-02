@@ -12,3 +12,7 @@ This is used for zoooming in and out of the camera.
 the starting follow offset position
 - Both the HandleRotation and Handle Zooming use Time to calculate the time since the last key press.
 This is used to calculate the rotation and zooming speed.
+1.10 :
+- System.Serializable and SerializeField are used on CameraConfig to make sure it's visible in the inspector 
+- EdgePanSize is from the edge of the screen to the middle, it acts as the trigger area for the camera to pan
+according to the mouse position
