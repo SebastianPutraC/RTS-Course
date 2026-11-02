@@ -1,0 +1,5 @@
+1.6 
+- Add cinemachine brain to the main camera. Then a new CinemachineCamera. The brain will follow the CinemachineCamera.
+- Adjust CinemachineCamera when following a target. RTS should have a top down view so increase the Y. 
+- Binding Mode is using Lock To Target With World Up to prevent the camera from rotating when the target rotates.
+- Cinemachine Rotation Composer controls the camera rotation and can be used when selecting it on the rotation control.
