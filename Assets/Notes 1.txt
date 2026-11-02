@@ -1,0 +1,27 @@
+1.6 
+- Add cinemachine brain to the main camera. Then a new CinemachineCamera. The brain will follow the CinemachineCamera.
+- Adjust CinemachineCamera when following a target. RTS should have a top down view so increase the Y. 
+- Binding Mode is using Lock To Target With World Up to prevent the camera from rotating when the target rotates.
+- Cinemachine Rotation Composer controls the camera rotation and can be used when selecting it on the rotation control.
+1.8 :
+- We can adjust the follow offset on CinemachineFollow to zoom in and out 
+- Slerp are similar to Lerp. instead of moving to a target linearly, it moves in a spherical way. 
+This is used for zoooming in and out of the camera.
+1.9 :
+- Fix the Z follow offset issue on the rotation. If no key button is pressed, will return to -8 as it is
+the starting follow offset position
+- Both the HandleRotation and Handle Zooming use Time to calculate the time since the last key press.
+This is used to calculate the rotation and zooming speed.
+1.10 :
+- System.Serializable and SerializeField are used on CameraConfig to make sure it's visible in the inspector 
+- EdgePanSize is from the edge of the screen to the middle, it acts as the trigger area for the camera to pan
+according to the mouse position
+1.11 :
+- Setup the Camera Target with Rigidbody and a collider. Freeze its rotation. This is used to prevent
+the camera from getting out of bound.
+- The Camera target and the world boundaries use a new layer called "World Bounds" and it should have no collision with other layers in the 
+Physics Settings. Only collide with itself is permitted.
+- Check why LinearVelocity is used instead of position to move the camera target. And why it Time.DeltaTime is used
+on the moveAmount
+- The Camera Target and the boundaries shouldn't have a friction or bounce. This is used because when it reached the boundary, 
+it might stop moving because of the friction. And if it has a bounce, it will bounce back when it reached the boundary.
