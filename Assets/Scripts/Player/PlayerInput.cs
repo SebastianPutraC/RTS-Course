@@ -13,6 +13,9 @@ namespace GameDevTV.RTS.Player
         [SerializeField] private CameraConfig cameraConfig;
         [SerializeField] private LayerMask selectableUnitsLayers;
         [SerializeField] private LayerMask floorLayers;
+        [SerializeField] private RectTransform selectionBox;
+
+        private Vector2 startingMousePosition;
 
         private CinemachineFollow cinemachineFollow;
         private float zoomStartTime;
@@ -41,6 +44,46 @@ namespace GameDevTV.RTS.Player
             HandleRotation();
             HandleLeftClick();
             HandleRightClick();
+            HandleDragSelect();
+        }
+
+        private void HandleDragSelect()
+        {
+            if (selectionBox == null)
+            {
+                return;
+            }
+
+            //Left button pressed to start
+            if (Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                selectionBox.gameObject.SetActive(true);
+                startingMousePosition = Mouse.current.position.ReadValue();
+            }
+
+            //Hold but not released (drag and select)
+            else if (Mouse.current.leftButton.isPressed
+                && !Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                ResizeSelectionBox();
+            }
+
+            //Released and check if theres unit on the box
+            else if (Mouse.current.leftButton.wasReleasedThisFrame)
+            {
+                selectionBox.gameObject.SetActive(false);
+            }
+        }
+
+        private void ResizeSelectionBox()
+        {
+            Vector2 mousePosition = Mouse.current.position.ReadValue();
+
+            float width = mousePosition.x - startingMousePosition.x;
+            float height = mousePosition.y - startingMousePosition.y;
+
+            selectionBox.anchoredPosition = startingMousePosition + new Vector2(width / 2, height / 2);
+            selectionBox.sizeDelta = new Vector2(Mathf.Abs(width), Mathf.Abs(height));
         }
 
         private void HandleRightClick()

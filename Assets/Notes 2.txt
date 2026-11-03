@@ -26,3 +26,8 @@ on the Physics settings for units and buildings
 - Since the unit only move on terrain and water(?), make a new layer for the rightclick raycast to only
 accept the terrain and water(?) as a possible move location, dont forget for it to not collide with the World Bounds layer
 - The water game object has childrens of corals and plants, dont put them on the floor layer, only the water
+2.7 :
+- It seems that the selection canvas (for drag select units) need to use Constant Pixel Size for scaler and the SelectionBox
+as its child (image) is anchored to the bottom left
+- The (width / 2 , height / 2) is because the pivot for the selection box is 0.5
+- Check on the lecture chapter again about how this works ^.
