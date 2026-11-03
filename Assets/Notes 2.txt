@@ -1,0 +1,4 @@
+2.2 
+- You can exclude the CameraTarget from the navigation mesh so that units can still walk throught it
+- Since ground unit can't traverse through water, by using Physics Colliders option on the nav mesh.
+You can disable the mesh collider on the water to exclude it when baking nav mesh
