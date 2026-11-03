@@ -1,3 +1,5 @@
+using GameDevTV.RTS.EventBus;
+using GameDevTV.RTS.Events;
 using GameDevTV.RTS.Units;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -35,6 +37,21 @@ namespace GameDevTV.RTS.Player
 
             // Should be 8 as in the initial value on the inspector (Follow Offset)
             maxRotationAmount = Mathf.Abs(cinemachineFollow.FollowOffset.z);
+
+            Bus<UnitSelectedEvent>.onEvent += HandleUnitSelected;
+        }
+        private void OnDestroy()
+        {
+            Bus<UnitSelectedEvent>.onEvent -= HandleUnitSelected;
+        }
+
+        private void HandleUnitSelected(UnitSelectedEvent evt)
+        {
+            if (selectedUnit != null)
+            {
+                selectedUnit.Deselect();
+            }
+            selectedUnit = evt.Unit;
         }
 
         private void Update()
@@ -125,7 +142,6 @@ namespace GameDevTV.RTS.Player
                     && hit.collider.TryGetComponent(out ISelectable selectable))
                 {
                     selectable.Select();
-                    selectedUnit = selectable;
                 }
             }
         }

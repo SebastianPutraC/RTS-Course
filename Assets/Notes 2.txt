@@ -31,3 +31,6 @@ accept the terrain and water(?) as a possible move location, dont forget for it 
 as its child (image) is anchored to the bottom left
 - The (width / 2 , height / 2) is because the pivot for the selection box is 0.5
 - Check on the lecture chapter again about how this works ^.
+2.8 : 
+- Learn more about Event Bus. In the lecture, the Unit act as the producer of event (When selected) and the player input act as
+the consumer of the event.
