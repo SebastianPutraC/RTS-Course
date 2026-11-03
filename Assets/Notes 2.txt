@@ -60,3 +60,4 @@ Learn about this method later
 - The new air unit should be not having any obstacle avoidance (quality = none) and matching agent type that's just made
 - New NavMeshSurface for the air unit is on the same gameobject as floor. You can make a new layer for this but the lecture use
 TransparentFX for "air units floor". Make sure that this new or TransparentFX layer doesn't collide with anything on the physics setting
+- The Y for air units will be automatically adjusted based on the nav mesh
