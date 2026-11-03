@@ -13,3 +13,12 @@ consider calculating avoidance. Vice versa, agent with higher priority cant push
 - Add on the PC_Renderer a Decal feature with rendering Layers turned on. This is used for indicator of a
 selected unit. 
 - You can change the type of shader for each material on the top of the inspector
+2.5 :
+- Unity might be better with fewer rendering layers. This lecture will remove all light layer except one that is
+for the floor.
+- This layer is used for the terrain and the decal projector for selected unit. The terrain should support the 
+floor rendering layer and the decal should only use floor as the rendering layer.
+- Add new (not rendering) layers for units and buildings. The collider part (Worker) is the only one who
+should be using the units layer in this lecture and not its children
+- We added world bounds layer previously and if we added a new layer, it will collide with it. Remove this 
+on the Physics settings for units and buildings
