@@ -74,7 +74,6 @@ namespace GameDevTV.RTS.Player
             HandlePanning();
             HandleZooming();
             HandleRotation();
-            HandleLeftClick();
             HandleRightClick();
             HandleDragSelect();
         }
@@ -89,37 +88,57 @@ namespace GameDevTV.RTS.Player
             //Left button pressed to start
             if (Mouse.current.leftButton.wasPressedThisFrame)
             {
-                selectionBox.sizeDelta = Vector2.zero;
-                selectionBox.gameObject.SetActive(true);
-                startingMousePosition = Mouse.current.position.ReadValue();
-                addedUnits.Clear();
+                HandleMouseDown();
             }
 
             //Hold but not released (drag and select)
             else if (Mouse.current.leftButton.isPressed
                 && !Mouse.current.leftButton.wasPressedThisFrame)
             {
-                Bounds selectionBoxBounds = ResizeSelectionBox();
-                foreach(AbstractUnit unit in aliveUnits)
-                {
-                    Vector2 unitPosition = camera.WorldToScreenPoint(unit.transform.position);
-                    if (selectionBoxBounds.Contains(unitPosition))
-                    {
-                        addedUnits.Add(unit);
-                    }
-                }
+                HandleMouseDrag();
             }
 
             //Released and check if theres unit on the box
             else if (Mouse.current.leftButton.wasReleasedThisFrame)
             {
-                DeselectAllUnits();
-                foreach(AbstractUnit unit in addedUnits)
-                {
-                    unit.Select();
-                }
-                selectionBox.gameObject.SetActive(false);
+                HandleMouseUp();
             }
+        }
+
+        private void HandleMouseUp()
+        {
+            //Keep adding unit if shift key is pressed. Drag or click will still add new units
+            if (!Keyboard.current.shiftKey.isPressed)
+            {
+                DeselectAllUnits();
+            }
+
+            HandleLeftClick();
+
+            foreach (AbstractUnit unit in addedUnits)
+            {
+                unit.Select();
+            }
+            selectionBox.gameObject.SetActive(false);
+        }
+        private void HandleMouseDrag()
+        {
+            Bounds selectionBoxBounds = ResizeSelectionBox();
+            foreach (AbstractUnit unit in aliveUnits)
+            {
+                Vector2 unitPosition = camera.WorldToScreenPoint(unit.transform.position);
+                if (selectionBoxBounds.Contains(unitPosition))
+                {
+                    addedUnits.Add(unit);
+                }
+            }
+        }
+        private void HandleMouseDown()
+        {
+            selectionBox.sizeDelta = Vector2.zero;
+            selectionBox.gameObject.SetActive(true);
+            startingMousePosition = Mouse.current.position.ReadValue();
+            addedUnits.Clear();
         }
 
         //Copy to currentlySelectedUnits to avoid modifying(removing units) from the
@@ -170,10 +189,9 @@ namespace GameDevTV.RTS.Player
             }
         }
 
-        //Will be handled later
         private void HandleLeftClick()
         {
-            /*if (camera == null) 
+            if (camera == null) 
             { 
                 return; 
             }
@@ -181,19 +199,11 @@ namespace GameDevTV.RTS.Player
             Ray cameraRay = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
 
             //Deselect first and then reselect to prevent same unit not selected if we clicked the same unit
-            if (Mouse.current.leftButton.wasReleasedThisFrame)
+            if (Physics.Raycast(cameraRay, out RaycastHit hit, float.MaxValue, selectableUnitsLayers)
+                && hit.collider.TryGetComponent(out ISelectable selectable))
             {
-                if (selectedUnit != null)
-                {
-                    selectedUnit.Deselect();
-                }
-
-                if (Physics.Raycast(cameraRay, out RaycastHit hit, float.MaxValue, selectableUnitsLayers)
-                    && hit.collider.TryGetComponent(out ISelectable selectable))
-                {
-                    selectable.Select();
-                }
-            }*/
+                selectable.Select();
+            }
         }
 
         private void HandleRotation()
