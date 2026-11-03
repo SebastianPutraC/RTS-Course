@@ -9,3 +9,7 @@ You can disable the mesh collider on the water to exclude it when baking nav mes
 agent will not detect each other and they can walk through each other.
 - NavMeshAgent with lower prioriy can push agent with same or higher priority, and they wont
 consider calculating avoidance. Vice versa, agent with higher priority cant push agent with lower priority.
+2.4 :
+- Add on the PC_Renderer a Decal feature with rendering Layers turned on. This is used for indicator of a
+selected unit. 
+- You can change the type of shader for each material on the top of the inspector
