@@ -44,4 +44,10 @@ It is also faster than List for adding and removing elements.
 2.11 : 
 - Reminder, any unit calling select will automatically added itself to the selectedUnits List and will raise a UnitSelectedEvent
 - HandleLeftClick are now be called on HandleMouseUp()
-- After releasing the mouse, if shift key is still pressed, the selected units will not be deselected. This is to allow multiple selection of units.
+- After releasing the mouse, if shift key is still pressed, the selected units will not be deselected. This is to allow multiple selection of units/
+2.12 :
+- Floor navmeshSurface should add the new floor layer before baking.
+- Add NavMeshObstacle to the resources with enabling carve to cut through the navMesh.
+The NavMeshObstcale will be automatically disabled when the resource are depleted (and disabled).
+- NavMeshModifierVolume doesn't update the NavMesh Surface so if you put non walkable in an area, even if  
+the object is disabled, units still won't able to move there

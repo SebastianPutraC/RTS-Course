@@ -499,7 +499,7 @@ MonoBehaviour:
   m_Center: {x: -0.14, y: 3.48, z: 0.17}
   m_LayerMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 272
   m_UseGeometry: 1
   m_DefaultArea: 0
   m_GenerateLinks: 0
@@ -14216,6 +14216,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bones_03_D (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6289819893858953828, guid: 0ea19ebcf842fc747be2158852be64bb, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 6629929164501004510, guid: 0ea19ebcf842fc747be2158852be64bb, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.099999994
@@ -14294,9 +14298,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedVersion: 0
-  m_Size: {x: 4, y: 3, z: 4}
-  m_Center: {x: 0, y: 1, z: 0}
-  m_Area: 0
+  m_Size: {x: 50, y: 11, z: 60}
+  m_Center: {x: 2, y: 20, z: 10}
+  m_Area: 1
   m_AffectedAgents: ffffffffi
 --- !u!1001 &1203640993
 PrefabInstance:
