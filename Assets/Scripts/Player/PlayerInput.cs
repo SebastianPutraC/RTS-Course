@@ -12,6 +12,7 @@ namespace GameDevTV.RTS.Player
         [SerializeField] private Camera camera;
         [SerializeField] private CameraConfig cameraConfig;
         [SerializeField] private LayerMask selectableUnitsLayers;
+        [SerializeField] private LayerMask floorLayers;
 
         private CinemachineFollow cinemachineFollow;
         private float zoomStartTime;
@@ -39,6 +40,24 @@ namespace GameDevTV.RTS.Player
             HandleZooming();
             HandleRotation();
             HandleLeftClick();
+            HandleRightClick();
+        }
+
+        private void HandleRightClick()
+        {
+            //moveable can be used as a variable past this if check
+            if (selectedUnit == null || selectedUnit is not IMoveable moveable)
+            {
+                return;
+            }
+
+            Ray cameraRay = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
+
+            if (Mouse.current.rightButton.wasReleasedThisFrame
+                && Physics.Raycast(cameraRay, out RaycastHit hit, float.MaxValue, floorLayers))
+            {
+                moveable.MoveTo(hit.point);
+            }
         }
 
         private void HandleLeftClick()

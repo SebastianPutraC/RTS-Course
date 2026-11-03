@@ -22,3 +22,7 @@ floor rendering layer and the decal should only use floor as the rendering layer
 should be using the units layer in this lecture and not its children
 - We added world bounds layer previously and if we added a new layer, it will collide with it. Remove this 
 on the Physics settings for units and buildings
+2.6 :
+- Since the unit only move on terrain and water(?), make a new layer for the rightclick raycast to only
+accept the terrain and water(?) as a possible move location, dont forget for it to not collide with the World Bounds layer
+- The water game object has childrens of corals and plants, dont put them on the floor layer, only the water
