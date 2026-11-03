@@ -1,3 +1,7 @@
+using GameDevTV.RTS.EventBus;
+using GameDevTV.RTS.Events;
+using GameDevTV.RTS.Units;
+using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -8,13 +12,25 @@ namespace GameDevTV.RTS.Player
     {
         [SerializeField] private Rigidbody cameraTarget;
         [SerializeField] private CinemachineCamera cinemachineCamera;
+        [SerializeField] private Camera camera;
         [SerializeField] private CameraConfig cameraConfig;
+        [SerializeField] private LayerMask selectableUnitsLayers;
+        [SerializeField] private LayerMask floorLayers;
+        [SerializeField] private RectTransform selectionBox;
+
+        private Vector2 startingMousePosition;
 
         private CinemachineFollow cinemachineFollow;
         private float zoomStartTime;
         private float rotationStartTime;
         private Vector3 startingFollowOffset;
         private float maxRotationAmount;
+        //100 as max number of units that can be selected at once and to prevent resizing list at runtime
+        private HashSet<AbstractUnit> aliveUnits = new HashSet<AbstractUnit>(100);
+        //Units inside of the selectionBox before added to selectedUnits
+        private HashSet<AbstractUnit> addedUnits = new HashSet<AbstractUnit>(24);
+        //12 same reason as hashset above
+        private List<ISelectable> selectedUnits = new List<ISelectable>(12);
 
         private void Awake()
         {
@@ -27,6 +43,30 @@ namespace GameDevTV.RTS.Player
 
             // Should be 8 as in the initial value on the inspector (Follow Offset)
             maxRotationAmount = Mathf.Abs(cinemachineFollow.FollowOffset.z);
+
+            Bus<UnitSelectedEvent>.onEvent += HandleUnitSelected;
+            Bus<UnitDeselectedEvent>.onEvent += HandleUnitDeselected;
+            Bus<UnitSpawnEvent>.onEvent += HandleUnitSpawn;
+
+        }
+        private void OnDestroy()
+        {
+            Bus<UnitSelectedEvent>.onEvent -= HandleUnitSelected;
+            Bus<UnitDeselectedEvent>.onEvent -= HandleUnitDeselected;
+            Bus<UnitSpawnEvent>.onEvent -= HandleUnitSpawn;
+        }
+
+        private void HandleUnitSelected(UnitSelectedEvent evt)
+        {
+            selectedUnits.Add(evt.Unit);
+        }
+        private void HandleUnitDeselected(UnitDeselectedEvent evt)
+        {
+            selectedUnits.Remove(evt.Unit);
+        }
+        private void HandleUnitSpawn(UnitSpawnEvent evt)
+        {
+            aliveUnits.Add(evt.Unit);
         }
 
         private void Update()
@@ -34,6 +74,172 @@ namespace GameDevTV.RTS.Player
             HandlePanning();
             HandleZooming();
             HandleRotation();
+            HandleRightClick();
+            HandleDragSelect();
+        }
+
+        private void HandleDragSelect()
+        {
+            if (selectionBox == null)
+            {
+                return;
+            }
+
+            //Left button pressed to start
+            if (Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                HandleMouseDown();
+            }
+
+            //Hold but not released (drag and select)
+            else if (Mouse.current.leftButton.isPressed
+                && !Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                HandleMouseDrag();
+            }
+
+            //Released and check if theres unit on the box
+            else if (Mouse.current.leftButton.wasReleasedThisFrame)
+            {
+                HandleMouseUp();
+            }
+        }
+
+        private void HandleMouseUp()
+        {
+            //Keep adding unit if shift key is pressed. Drag or click will still add new units
+            if (!Keyboard.current.shiftKey.isPressed)
+            {
+                DeselectAllUnits();
+            }
+
+            HandleLeftClick();
+
+            foreach (AbstractUnit unit in addedUnits)
+            {
+                unit.Select();
+            }
+            selectionBox.gameObject.SetActive(false);
+        }
+        private void HandleMouseDrag()
+        {
+            Bounds selectionBoxBounds = ResizeSelectionBox();
+            foreach (AbstractUnit unit in aliveUnits)
+            {
+                Vector2 unitPosition = camera.WorldToScreenPoint(unit.transform.position);
+                if (selectionBoxBounds.Contains(unitPosition))
+                {
+                    addedUnits.Add(unit);
+                }
+            }
+        }
+        private void HandleMouseDown()
+        {
+            selectionBox.sizeDelta = Vector2.zero;
+            selectionBox.gameObject.SetActive(true);
+            startingMousePosition = Mouse.current.position.ReadValue();
+            addedUnits.Clear();
+        }
+
+        //Copy to currentlySelectedUnits to avoid modifying(removing units) from the
+        //selectedUnitList while iterating through it
+        private void DeselectAllUnits()
+        {
+            ISelectable[] currentlySelectedUnits = selectedUnits.ToArray();
+            foreach (ISelectable selectable in currentlySelectedUnits)
+            {
+                selectable.Deselect();
+            }
+        }
+
+        private Bounds ResizeSelectionBox()
+        {
+            Vector2 mousePosition = Mouse.current.position.ReadValue();
+
+            float width = mousePosition.x - startingMousePosition.x;
+            float height = mousePosition.y - startingMousePosition.y;
+
+            selectionBox.anchoredPosition = startingMousePosition + new Vector2(width / 2, height / 2);
+            selectionBox.sizeDelta = new Vector2(Mathf.Abs(width), Mathf.Abs(height));
+
+            //Center is the anchoredPosition and size is the sizeDelta of the selection box
+            return new Bounds(selectionBox.anchoredPosition, selectionBox.sizeDelta);
+        }
+
+        private void HandleRightClick()
+        {
+            //moveable can be used as a variable past this if check
+            if (selectedUnits.Count == 0)
+            {
+                return;
+            }
+
+            Ray cameraRay = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
+
+            if (Mouse.current.rightButton.wasReleasedThisFrame
+                && Physics.Raycast(cameraRay, out RaycastHit hit, float.MaxValue, floorLayers))
+            {
+                List<AbstractUnit> abstractUnits = new(selectedUnits.Count);
+                foreach(ISelectable selectable in selectedUnits)
+                {
+                    if (selectable is AbstractUnit unit)
+                    {
+                        abstractUnits.Add(unit);
+                    }
+                }
+                int layer = 0;
+                int unitsOnLayer = 0;
+                int maxUnitsOnLayer = 1;
+                float circleRadius = 0;
+                float radialOffset = 0;
+
+                foreach (AbstractUnit unit in abstractUnits)
+                {
+                    Vector3 targetPosition = new(
+                        hit.point.x + circleRadius * Mathf.Cos(radialOffset * unitsOnLayer),
+                        hit.point.y,
+                        hit.point.z + circleRadius * Mathf.Sin(radialOffset * unitsOnLayer)
+                    );
+
+                    unit.MoveTo(targetPosition);
+                    unitsOnLayer++;
+
+                    if (unitsOnLayer >= maxUnitsOnLayer)
+                    {
+                        layer++;
+                        unitsOnLayer = 0;
+                        circleRadius += unit.AgentRadius * 3.5f;
+                        maxUnitsOnLayer = Mathf.FloorToInt(2 * Mathf.PI * circleRadius / (unit.AgentRadius * 2));
+                        radialOffset = 2 * Mathf.PI / maxUnitsOnLayer;
+                    }
+                }
+
+
+                /*foreach(ISelectable selectable in selectedUnits)
+                {
+                    if (selectable is IMoveable moveable)
+                    {
+                        moveable.MoveTo(hit.point);
+                    }
+                }*/
+            }
+        }
+
+        private void HandleLeftClick()
+        {
+            if (camera == null) 
+            { 
+                return; 
+            }
+
+            Ray cameraRay = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
+
+            //Deselect first and then reselect to prevent same unit not selected if we clicked the same unit
+            if (Physics.Raycast(cameraRay, out RaycastHit hit, float.MaxValue, selectableUnitsLayers)
+                && hit.collider.TryGetComponent(out ISelectable selectable))
+            {
+                selectable.Select();
+            }
         }
 
         private void HandleRotation()

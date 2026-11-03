@@ -1,0 +1,63 @@
+2.2 :
+- You can exclude the CameraTarget from the navigation mesh so that units can still walk throught it
+- Since ground unit can't traverse through water, by using Physics Colliders option on the nav mesh.
+You can disable the mesh collider on the water to exclude it when baking nav mesh
+2.3 : 
+- Angular Speed for NavMeshAgent is the rotation speed
+- Stopping distance is the distance from the target position that the agent will stop moving
+- Quality determines how responsive the detection between NavMeshAgeent. "None" to both 
+agent will not detect each other and they can walk through each other.
+- NavMeshAgent with lower prioriy can push agent with same or higher priority, and they wont
+consider calculating avoidance. Vice versa, agent with higher priority cant push agent with lower priority.
+2.4 :
+- Add on the PC_Renderer a Decal feature with rendering Layers turned on. This is used for indicator of a
+selected unit. 
+- You can change the type of shader for each material on the top of the inspector
+2.5 :
+- Unity might be better with fewer rendering layers. This lecture will remove all light layer except one that is
+for the floor.
+- This layer is used for the terrain and the decal projector for selected unit. The terrain should support the 
+floor rendering layer and the decal should only use floor as the rendering layer.
+- Add new (not rendering) layers for units and buildings. The collider part (Worker) is the only one who
+should be using the units layer in this lecture and not its children
+- We added world bounds layer previously and if we added a new layer, it will collide with it. Remove this 
+on the Physics settings for units and buildings
+2.6 :
+- Since the unit only move on terrain and water(?), make a new layer for the rightclick raycast to only
+accept the terrain and water(?) as a possible move location, dont forget for it to not collide with the World Bounds layer
+- The water game object has childrens of corals and plants, dont put them on the floor layer, only the water
+2.7 :
+- It seems that the selection canvas (for drag select units) need to use Constant Pixel Size for scaler and the SelectionBox
+as its child (image) is anchored to the bottom left
+- The (width / 2 , height / 2) is because the pivot for the selection box is 0.5
+- Check on the lecture chapter again about how this works ^.
+2.8 : 
+- Learn more about Event Bus. In the lecture, the Unit act as the producer of event (When selected) and the player input act as
+the consumer of the event.
+2.10 :
+- Learn more about HashSet. It is a collection of unique elements and it is faster than List for searching an element.
+It is also faster than List for adding and removing elements.
+- Bounds is a struct that represents an axis-aligned bounding box. It is used to select Units inside the selection box.
+- The units inside of the selection box are added to the addedUnits HashSet and then added to the selectedUnits List
+- When deselecting multiple units, we need to make a copy of the selectedUnits List to avoid modifying the collection while iterating over it.
+- The singular unit selection in HandleLeftClick() will be changed at later lectures
+2.11 : 
+- Reminder, any unit calling select will automatically added itself to the selectedUnits List and will raise a UnitSelectedEvent
+- HandleLeftClick are now be called on HandleMouseUp()
+- After releasing the mouse, if shift key is still pressed, the selected units will not be deselected. This is to allow multiple selection of units/
+2.12 :
+- Floor navmeshSurface should add the new floor layer before baking.
+- Add NavMeshObstacle to the resources with enabling carve to cut through the navMesh.
+The NavMeshObstcale will be automatically disabled when the resource are depleted (and disabled).
+- NavMeshModifierVolume doesn't update the NavMesh Surface so if you put non walkable in an area, even if  
+the object is disabled, units still won't able to move there
+2.13 :
+- We can put adjacent unit using Unit Circle multiple unit trying and pushing to get into the same position. 
+Learn about this method later
+- Removing the stopping distance will make similar shape as the unit circle, but for now keep it at 1
+2.14 : 
+- Go to the menu for AI and select Navigation on the top bar. Add a new agent type for flying units.
+- The new air unit should be not having any obstacle avoidance (quality = none) and matching agent type that's just made
+- New NavMeshSurface for the air unit is on the same gameobject as floor. You can make a new layer for this but the lecture use
+TransparentFX for "air units floor". Make sure that this new or TransparentFX layer doesn't collide with anything on the physics setting
+- The Y for air units will be automatically adjusted based on the nav mesh
