@@ -34,3 +34,10 @@ as its child (image) is anchored to the bottom left
 2.8 : 
 - Learn more about Event Bus. In the lecture, the Unit act as the producer of event (When selected) and the player input act as
 the consumer of the event.
+2.10 :
+- Learn more about HashSet. It is a collection of unique elements and it is faster than List for searching an element.
+It is also faster than List for adding and removing elements.
+- Bounds is a struct that represents an axis-aligned bounding box. It is used to select Units inside the selection box.
+- The units inside of the selection box are added to the addedUnits HashSet and then added to the selectedUnits List
+- When deselecting multiple units, we need to make a copy of the selectedUnits List to avoid modifying the collection while iterating over it.
+- The singular unit selection in HandleLeftClick() will be changed at later lectures

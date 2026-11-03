@@ -1,6 +1,7 @@
 using GameDevTV.RTS.EventBus;
 using GameDevTV.RTS.Events;
 using GameDevTV.RTS.Units;
+using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -24,7 +25,12 @@ namespace GameDevTV.RTS.Player
         private float rotationStartTime;
         private Vector3 startingFollowOffset;
         private float maxRotationAmount;
-        private ISelectable selectedUnit;
+        //100 as max number of units that can be selected at once and to prevent resizing list at runtime
+        private HashSet<AbstractUnit> aliveUnits = new HashSet<AbstractUnit>(100);
+        //Units inside of the selectionBox before added to selectedUnits
+        private HashSet<AbstractUnit> addedUnits = new HashSet<AbstractUnit>(24);
+        //12 same reason as hashset above
+        private List<ISelectable> selectedUnits = new List<ISelectable>(12);
 
         private void Awake()
         {
@@ -39,19 +45,28 @@ namespace GameDevTV.RTS.Player
             maxRotationAmount = Mathf.Abs(cinemachineFollow.FollowOffset.z);
 
             Bus<UnitSelectedEvent>.onEvent += HandleUnitSelected;
+            Bus<UnitDeselectedEvent>.onEvent += HandleUnitDeselected;
+            Bus<UnitSpawnEvent>.onEvent += HandleUnitSpawn;
+
         }
         private void OnDestroy()
         {
             Bus<UnitSelectedEvent>.onEvent -= HandleUnitSelected;
+            Bus<UnitDeselectedEvent>.onEvent -= HandleUnitDeselected;
+            Bus<UnitSpawnEvent>.onEvent -= HandleUnitSpawn;
         }
 
         private void HandleUnitSelected(UnitSelectedEvent evt)
         {
-            if (selectedUnit != null)
-            {
-                selectedUnit.Deselect();
-            }
-            selectedUnit = evt.Unit;
+            selectedUnits.Add(evt.Unit);
+        }
+        private void HandleUnitDeselected(UnitDeselectedEvent evt)
+        {
+            selectedUnits.Remove(evt.Unit);
+        }
+        private void HandleUnitSpawn(UnitSpawnEvent evt)
+        {
+            aliveUnits.Add(evt.Unit);
         }
 
         private void Update()
@@ -74,25 +89,51 @@ namespace GameDevTV.RTS.Player
             //Left button pressed to start
             if (Mouse.current.leftButton.wasPressedThisFrame)
             {
+                selectionBox.sizeDelta = Vector2.zero;
                 selectionBox.gameObject.SetActive(true);
                 startingMousePosition = Mouse.current.position.ReadValue();
+                addedUnits.Clear();
             }
 
             //Hold but not released (drag and select)
             else if (Mouse.current.leftButton.isPressed
                 && !Mouse.current.leftButton.wasPressedThisFrame)
             {
-                ResizeSelectionBox();
+                Bounds selectionBoxBounds = ResizeSelectionBox();
+                foreach(AbstractUnit unit in aliveUnits)
+                {
+                    Vector2 unitPosition = camera.WorldToScreenPoint(unit.transform.position);
+                    if (selectionBoxBounds.Contains(unitPosition))
+                    {
+                        addedUnits.Add(unit);
+                    }
+                }
             }
 
             //Released and check if theres unit on the box
             else if (Mouse.current.leftButton.wasReleasedThisFrame)
             {
+                DeselectAllUnits();
+                foreach(AbstractUnit unit in addedUnits)
+                {
+                    unit.Select();
+                }
                 selectionBox.gameObject.SetActive(false);
             }
         }
 
-        private void ResizeSelectionBox()
+        //Copy to currentlySelectedUnits to avoid modifying(removing units) from the
+        //selectedUnitList while iterating through it
+        private void DeselectAllUnits()
+        {
+            ISelectable[] currentlySelectedUnits = selectedUnits.ToArray();
+            foreach (ISelectable selectable in currentlySelectedUnits)
+            {
+                selectable.Deselect();
+            }
+        }
+
+        private Bounds ResizeSelectionBox()
         {
             Vector2 mousePosition = Mouse.current.position.ReadValue();
 
@@ -101,12 +142,15 @@ namespace GameDevTV.RTS.Player
 
             selectionBox.anchoredPosition = startingMousePosition + new Vector2(width / 2, height / 2);
             selectionBox.sizeDelta = new Vector2(Mathf.Abs(width), Mathf.Abs(height));
+
+            //Center is the anchoredPosition and size is the sizeDelta of the selection box
+            return new Bounds(selectionBox.anchoredPosition, selectionBox.sizeDelta);
         }
 
         private void HandleRightClick()
         {
             //moveable can be used as a variable past this if check
-            if (selectedUnit == null || selectedUnit is not IMoveable moveable)
+            if (selectedUnits.Count == 0)
             {
                 return;
             }
@@ -116,13 +160,20 @@ namespace GameDevTV.RTS.Player
             if (Mouse.current.rightButton.wasReleasedThisFrame
                 && Physics.Raycast(cameraRay, out RaycastHit hit, float.MaxValue, floorLayers))
             {
-                moveable.MoveTo(hit.point);
+                foreach(ISelectable selectable in selectedUnits)
+                {
+                    if (selectable is IMoveable moveable)
+                    {
+                        moveable.MoveTo(hit.point);
+                    }
+                }
             }
         }
 
+        //Will be handled later
         private void HandleLeftClick()
         {
-            if (camera == null) 
+            /*if (camera == null) 
             { 
                 return; 
             }
@@ -135,7 +186,6 @@ namespace GameDevTV.RTS.Player
                 if (selectedUnit != null)
                 {
                     selectedUnit.Deselect();
-                    selectedUnit = null;
                 }
 
                 if (Physics.Raycast(cameraRay, out RaycastHit hit, float.MaxValue, selectableUnitsLayers)
@@ -143,7 +193,7 @@ namespace GameDevTV.RTS.Player
                 {
                     selectable.Select();
                 }
-            }
+            }*/
         }
 
         private void HandleRotation()
