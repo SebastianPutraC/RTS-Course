@@ -55,3 +55,8 @@ the object is disabled, units still won't able to move there
 - We can put adjacent unit using Unit Circle multiple unit trying and pushing to get into the same position. 
 Learn about this method later
 - Removing the stopping distance will make similar shape as the unit circle, but for now keep it at 1
+2.14 : 
+- Go to the menu for AI and select Navigation on the top bar. Add a new agent type for flying units.
+- The new air unit should be not having any obstacle avoidance (quality = none) and matching agent type that's just made
+- New NavMeshSurface for the air unit is on the same gameobject as floor. You can make a new layer for this but the lecture use
+TransparentFX for "air units floor". Make sure that this new or TransparentFX layer doesn't collide with anything on the physics setting
