@@ -11,6 +11,10 @@ namespace GameDevTV.RTS.Units
     {
         //[SerializeField] private Transform target;
         [SerializeField] DecalProjector decalProjector;
+        public float AgentRadius
+        {
+            get { return agent.radius; }
+        }
 
         private NavMeshAgent agent;
 
