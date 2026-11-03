@@ -1,4 +1,11 @@
-2.2 
+2.2 :
 - You can exclude the CameraTarget from the navigation mesh so that units can still walk throught it
 - Since ground unit can't traverse through water, by using Physics Colliders option on the nav mesh.
 You can disable the mesh collider on the water to exclude it when baking nav mesh
+2.3 : 
+- Angular Speed for NavMeshAgent is the rotation speed
+- Stopping distance is the distance from the target position that the agent will stop moving
+- Quality determines how responsive the detection between NavMeshAgeent. "None" to both 
+agent will not detect each other and they can walk through each other.
+- NavMeshAgent with lower prioriy can push agent with same or higher priority, and they wont
+consider calculating avoidance. Vice versa, agent with higher priority cant push agent with lower priority.
