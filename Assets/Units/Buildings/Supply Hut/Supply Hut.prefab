@@ -130,8 +130,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83273e0b21e37bd45a089d32e2ee3b09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameDevTV.RTS.Units.SupplyHut
+  <CurrentHealth>k__BackingField: 0
+  <MaxHealth>k__BackingField: 0
   decalProjector: {fileID: 2361634279740249674}
-  <Health>k__BackingField: 0
+  UnitSO: {fileID: 11400000, guid: 5d349e7751a0261469d7a11b0b29672e, type: 2}
 --- !u!208 &1647669097309455234
 NavMeshObstacle:
   m_ObjectHideFlags: 0
