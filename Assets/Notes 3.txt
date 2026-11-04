@@ -1,0 +1,3 @@
+3.5 :
+- Instead of using SupplyHut the lecture suggest making a BaseBuilding script. I keep the SupplyHut script 
+just in case it's needed later, but now use the BaseBuilding script for the SupplyHut and the new Command Post
