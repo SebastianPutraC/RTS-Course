@@ -8,3 +8,7 @@ if the command action can be handled.
 - Since ICommand is an interface, it wont show on the inspector. Make a new class (ActionBase) that inherits ICommand and
 ScriptableObject. This will be used on AbstractCommandable to store commands. ActionBase also act as the parent for other commands (MoveCommand at this stage)
 - At this lecture, comment the Unit Circle on the Player Input right click function(For now) just to easily test if the command action.
+3.7 : 
+- Create CommmandContext that acts as a parameter for ICommand's and ActionBase's action handler
+- It seems like the PlayerInput Right click input will reiterate every single command that the unit has. Might be
+changed at later lecture

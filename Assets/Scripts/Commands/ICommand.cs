@@ -5,8 +5,12 @@ namespace GameDevTV.RTS.Commands
 {
     public interface ICommand
     {
-        bool CanHandle(AbstractComandable commandable, RaycastHit hit);
-        void Handle(AbstractComandable commandable, RaycastHit hit);
+        //Previously
+        //bool CanHandle(AbstractComandable commandable, RaycastHit hit);
+        //void Handle(AbstractComandable commandable, RaycastHit hit);
+
+        bool CanHandle(CommandContext context);
+        void Handle(CommandContext context);
     }
 }
 

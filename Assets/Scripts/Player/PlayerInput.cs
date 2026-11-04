@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.UI.CanvasScaler;
 
 namespace GameDevTV.RTS.Player
 {
@@ -187,49 +188,22 @@ namespace GameDevTV.RTS.Player
                         abstractUnits.Add(unit);
                     }
                 }
-                int layer = 0;
-                int unitsOnLayer = 0;
-                int maxUnitsOnLayer = 1;
-                float circleRadius = 0;
-                float radialOffset = 0;
 
-                foreach (AbstractUnit unit in abstractUnits)
+                //Will this do everything on the AvailableCommand on each unit?
+                for (int i = 0; i < abstractUnits.Count; i++)
                 {
-                    foreach (ICommand command in unit.AvailableCommands)
+                    //i is UnitIndex on CommandContext
+                    CommandContext context = new(abstractUnits[i], hit, i);
+
+                    foreach (ICommand command in abstractUnits[i].AvailableCommands)
                     {
-                        if (command.CanHandle(unit, hit))
+                        if (command.CanHandle(context))
                         {
-                            command.Handle(unit, hit);
+                            command.Handle(context);
+                            break;
                         }
                     }
-
-                    //Vector3 targetPosition = new(
-                    //    hit.point.x + circleRadius * Mathf.Cos(radialOffset * unitsOnLayer),
-                    //    hit.point.y,
-                    //    hit.point.z + circleRadius * Mathf.Sin(radialOffset * unitsOnLayer)
-                    //);
-
-                    //unit.MoveTo(targetPosition);
-                    //unitsOnLayer++;
-
-                    //if (unitsOnLayer >= maxUnitsOnLayer)
-                    //{
-                    //    layer++;
-                    //    unitsOnLayer = 0;
-                    //    circleRadius += unit.AgentRadius * 3.5f;
-                    //    maxUnitsOnLayer = Mathf.FloorToInt(2 * Mathf.PI * circleRadius / (unit.AgentRadius * 2));
-                    //    radialOffset = 2 * Mathf.PI / maxUnitsOnLayer;
-                    //}
                 }
-
-
-                /*foreach(ISelectable selectable in selectedUnits)
-                {
-                    if (selectable is IMoveable moveable)
-                    {
-                        moveable.MoveTo(hit.point);
-                    }
-                }*/
             }
         }
 
