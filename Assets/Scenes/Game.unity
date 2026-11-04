@@ -27172,6 +27172,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5004720826620963258, guid: 9cd21bf41652fdf49ba05bc10fa4d90d, type: 3}
   m_PrefabInstance: {fileID: 1958439347}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1973151588
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -53
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6964012305514025925, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_Name
+      value: Supply Hut
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
 --- !u!1001 &1975476743
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29499,3 +29556,4 @@ SceneRoots:
   - {fileID: 811251444}
   - {fileID: 459311104}
   - {fileID: 1522074165}
+  - {fileID: 1973151588}
