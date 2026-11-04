@@ -1,3 +1,10 @@
 3.5 :
 - Instead of using SupplyHut the lecture suggest making a BaseBuilding script. I keep the SupplyHut script 
 just in case it's needed later, but now use the BaseBuilding script for the SupplyHut and the new Command Post
+3.6 : 
+- Use Command Pattern to store actions that units can do with the input by the player. ICommand can check with bool return
+if the command action can be handled.
+- The AbstractCommandable shold store each available commands
+- Since ICommand is an interface, it wont show on the inspector. Make a new class (ActionBase) that inherits ICommand and
+ScriptableObject. This will be used on AbstractCommandable to store commands. ActionBase also act as the parent for other commands (MoveCommand at this stage)
+- At this lecture, comment the Unit Circle on the Player Input right click function(For now) just to easily test if the command action.
