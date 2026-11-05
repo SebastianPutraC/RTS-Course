@@ -7,7 +7,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace GameDevTV.RTS.Units
 {
-    public abstract class AbstractComandable : MonoBehaviour, ISelectable
+    public abstract class AbstractCommandable : MonoBehaviour, ISelectable
     {
         [field: SerializeField] public int CurrentHealth { get; private set; }
         [field: SerializeField] public int MaxHealth { get; private set; }

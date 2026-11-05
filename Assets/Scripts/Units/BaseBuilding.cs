@@ -1,6 +1,6 @@
 namespace GameDevTV.RTS.Units
 {
-    public class BaseBuilding : AbstractComandable
+    public class BaseBuilding : AbstractCommandable
     {
 
     }

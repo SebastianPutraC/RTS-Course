@@ -1,6 +1,6 @@
 namespace GameDevTV.RTS.Units
 {
-    public class SupplyHut : AbstractComandable, ISelectable
+    public class SupplyHut : AbstractCommandable, ISelectable
     {
         
     }

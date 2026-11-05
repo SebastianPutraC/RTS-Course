@@ -6,7 +6,7 @@ using UnityEngine.AI;
 namespace GameDevTV.RTS.Units
 {
     [RequireComponent(typeof(NavMeshAgent))]
-    public abstract class AbstractUnit : AbstractComandable, IMoveable
+    public abstract class AbstractUnit : AbstractCommandable, IMoveable
     {
         //[SerializeField] private Transform target;
         public float AgentRadius

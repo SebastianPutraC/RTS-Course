@@ -46,16 +46,16 @@ namespace GameDevTV.RTS.Player
             // Should be 8 as in the initial value on the inspector (Follow Offset)
             maxRotationAmount = Mathf.Abs(cinemachineFollow.FollowOffset.z);
 
-            Bus<UnitSelectedEvent>.onEvent += HandleUnitSelected;
-            Bus<UnitDeselectedEvent>.onEvent += HandleUnitDeselected;
-            Bus<UnitSpawnEvent>.onEvent += HandleUnitSpawn;
+            Bus<UnitSelectedEvent>.OnEvent += HandleUnitSelected;
+            Bus<UnitDeselectedEvent>.OnEvent += HandleUnitDeselected;
+            Bus<UnitSpawnEvent>.OnEvent += HandleUnitSpawn;
 
         }
         private void OnDestroy()
         {
-            Bus<UnitSelectedEvent>.onEvent -= HandleUnitSelected;
-            Bus<UnitDeselectedEvent>.onEvent -= HandleUnitDeselected;
-            Bus<UnitSpawnEvent>.onEvent -= HandleUnitSpawn;
+            Bus<UnitSelectedEvent>.OnEvent -= HandleUnitSelected;
+            Bus<UnitDeselectedEvent>.OnEvent -= HandleUnitDeselected;
+            Bus<UnitSpawnEvent>.OnEvent -= HandleUnitSpawn;
         }
 
         private void HandleUnitSelected(UnitSelectedEvent evt)

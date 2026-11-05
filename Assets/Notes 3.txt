@@ -12,3 +12,6 @@ ScriptableObject. This will be used on AbstractCommandable to store commands. Ac
 - Create CommmandContext that acts as a parameter for ICommand's and ActionBase's action handler
 - It seems like the PlayerInput Right click input will reiterate every single command that the unit has. Might be
 changed at later lecture
+3.8 :
+- Using HashSet on ActionsUI because the order doesnt matters. This is placed on the ActionsContainer on RuntimeUI
+- Units when selected is set to be ISelectable, so in ActionsUI you need to convert it to AbstractCommandable
