@@ -5,6 +5,7 @@ using GameDevTV.RTS.Units;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace GameDevTV.RTS.UI
 {
@@ -17,10 +18,12 @@ namespace GameDevTV.RTS.UI
         {
             Bus<UnitSelectedEvent>.OnEvent += HandleUnitSelected;
             Bus<UnitDeselectedEvent>.OnEvent += HandleUnitDeselected;
-
+        }
+        private void Start()
+        {
             foreach (UIActionButton actionButton in ActionButtons)
             {
-                actionButton.SetIcon(null);
+                actionButton.Disable();
             }
         }
 
@@ -47,7 +50,6 @@ namespace GameDevTV.RTS.UI
                 RefreshButtons();
             }
         }
-
         private void RefreshButtons()
         {
             HashSet<ActionBase> availableCommands = new(9);
@@ -65,14 +67,17 @@ namespace GameDevTV.RTS.UI
 
                 if (actionForSlot != null)
                 {
-                    ActionButtons[i].SetIcon(actionForSlot.Icon);
+                    ActionButtons[i].EnableFor(actionForSlot, HandleClick(actionForSlot));
                 }
                 else
                 {
-                    ActionButtons[i].SetIcon(null);
+                    ActionButtons[i].Disable();
                 }
             }
-
+        }
+        private UnityAction HandleClick(ActionBase action)
+        {
+            return () => Bus<ActionSelectedEvent>.Raise(new ActionSelectedEvent(action));
         }
     }
 }

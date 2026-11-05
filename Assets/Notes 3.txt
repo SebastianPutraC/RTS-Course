@@ -15,3 +15,10 @@ changed at later lecture
 3.8 :
 - Using HashSet on ActionsUI because the order doesnt matters. This is placed on the ActionsContainer on RuntimeUI
 - Units when selected is set to be ISelectable, so in ActionsUI you need to convert it to AbstractCommandable
+3.9 : 
+- Check on how UnityAction works on the UIActionButton. This is used as a delegate for the ActionSelectedEvent which added
+to the event bus
+- The HandleLeftClick now is being used for doing action if the target is floor layer (For now) after choosing an action
+in the UI
+- To check if clicking to the UI is seperate from clicking to the world. Make a bool and check by using
+EventSystem.current.IsPointerOverGameObject();. This is used to prevent deselecting when left clicking
