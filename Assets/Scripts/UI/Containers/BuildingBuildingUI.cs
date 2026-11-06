@@ -8,18 +8,40 @@ namespace GameDevTV.RTS.UI.Containers
 {
     public class BuildingBuildingUI : MonoBehaviour, IUIElement<BaseBuilding>
     {
+        [SerializeField] private UIBuildQueueButton[] unitButtons;
         [SerializeField] private ProgressBar progressBar;
         private BaseBuilding building;
         private Coroutine buildCoroutine;
 
         public void EnableFor(BaseBuilding item)
         {
+            progressBar.SetProgress(0);
             gameObject.SetActive(true);
             building = item;
             building.OnQueueUpdated += HandleQueueUpdated;
+            SetupUnitButtons();
 
             buildCoroutine = StartCoroutine(UpdateUnitProgress());
         }
+
+        private void SetupUnitButtons()
+        {
+            int i = 0;
+            // i = 0, 1, 2
+            for (; i < building.QueueSize; i++)
+            {
+                int index = i;
+                unitButtons[i].EnableFor(building.Queue[i],
+                    () => building.CancelBuildingUnit(index));
+            }
+            // Exit i = 2 then, 3, 4
+            // Disable the index past the QueueSize
+            for (; i < unitButtons.Length; i++)
+            {
+                unitButtons[i].Disable();
+            }
+        }
+
         public void Disable()
         {
             if (building != null)
@@ -38,6 +60,8 @@ namespace GameDevTV.RTS.UI.Containers
             {
                 buildCoroutine = StartCoroutine(UpdateUnitProgress());
             }
+
+            SetupUnitButtons();
         }
 
         private IEnumerator UpdateUnitProgress()

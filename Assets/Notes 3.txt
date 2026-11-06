@@ -43,3 +43,6 @@ not the select and deselect part
 - Use event on BaseBuilding to give information regarding the buildingQueue variable information for the BuildingBuildingUI
 - Coroutine can be stored as a variable and on BuildingBuildingUI, its used to making sure only one coroutine is running at all time. 
 Set this coroutine to null when the building progress is finished
+3.15 :
+- ToArray() will return copy of the original array / queue. This means that it will prevent manipulation from other script when the original queue is processing.
+- Because the player can cancel a unit in the middle of a queue, change the queue to liswt for the BaseBuilding
