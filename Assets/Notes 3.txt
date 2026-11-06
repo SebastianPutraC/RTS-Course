@@ -22,3 +22,11 @@ to the event bus
 in the UI
 - To check if clicking to the UI is seperate from clicking to the world. Make a bool and check by using
 EventSystem.current.IsPointerOverGameObject();. This is used to prevent deselecting when left clicking
+3.10 : 
+- A thing to remember. There's two way for any action is activated in PlayerInput for units. The right click button which default to move (?) and on the
+ActivateAction function. The ActivateAction is used on the HandleLeftClick after picking an action that needs left clik to the ground from the UI (Move).
+The other one is actions that doesn't need any left click input later like building a new unit which only need left click to the UI button and not elsewhere
+3.11 :
+- Use queue to queue up building new units. Pretty simple but could be useful in the future
+- Just to remind myself, wasMouseDownOnUI is used to check if the mouse is being clicked on the UI or the floor. Different thing may happen 
+for example left clicking the UI after selecting a Unit will not deselect them. This is used so that the unit can access actions on the UI

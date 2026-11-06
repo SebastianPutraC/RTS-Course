@@ -122,7 +122,7 @@ namespace GameDevTV.RTS.Player
         private void HandleMouseUp()
         {
             //Keep adding unit if shift key is pressed. Drag or click will still add new units
-            if (activeAction == null && !Keyboard.current.shiftKey.isPressed)
+            if (!wasMouseDownOnUI && activeAction == null && !Keyboard.current.shiftKey.isPressed)
             {
                 DeselectAllUnits();
             }
