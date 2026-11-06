@@ -1,9 +1,12 @@
+using GameDevTV.RTS.Commands;
 using GameDevTV.RTS.EventBus;
 using GameDevTV.RTS.Events;
 using GameDevTV.RTS.Units;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace GameDevTV.RTS.Player
@@ -18,8 +21,9 @@ namespace GameDevTV.RTS.Player
         [SerializeField] private LayerMask floorLayers;
         [SerializeField] private RectTransform selectionBox;
 
+        private bool wasMouseDownOnUI;
         private Vector2 startingMousePosition;
-
+        private ActionBase activeAction;
         private CinemachineFollow cinemachineFollow;
         private float zoomStartTime;
         private float rotationStartTime;
@@ -44,16 +48,18 @@ namespace GameDevTV.RTS.Player
             // Should be 8 as in the initial value on the inspector (Follow Offset)
             maxRotationAmount = Mathf.Abs(cinemachineFollow.FollowOffset.z);
 
-            Bus<UnitSelectedEvent>.onEvent += HandleUnitSelected;
-            Bus<UnitDeselectedEvent>.onEvent += HandleUnitDeselected;
-            Bus<UnitSpawnEvent>.onEvent += HandleUnitSpawn;
+            Bus<UnitSelectedEvent>.OnEvent += HandleUnitSelected;
+            Bus<UnitDeselectedEvent>.OnEvent += HandleUnitDeselected;
+            Bus<UnitSpawnEvent>.OnEvent += HandleUnitSpawn;
+            Bus<ActionSelectedEvent>.OnEvent += HandleActionSelected;
 
         }
         private void OnDestroy()
         {
-            Bus<UnitSelectedEvent>.onEvent -= HandleUnitSelected;
-            Bus<UnitDeselectedEvent>.onEvent -= HandleUnitDeselected;
-            Bus<UnitSpawnEvent>.onEvent -= HandleUnitSpawn;
+            Bus<UnitSelectedEvent>.OnEvent -= HandleUnitSelected;
+            Bus<UnitDeselectedEvent>.OnEvent -= HandleUnitDeselected;
+            Bus<UnitSpawnEvent>.OnEvent -= HandleUnitSpawn;
+            Bus<ActionSelectedEvent>.OnEvent -= HandleActionSelected;
         }
 
         private void HandleUnitSelected(UnitSelectedEvent evt)
@@ -67,6 +73,14 @@ namespace GameDevTV.RTS.Player
         private void HandleUnitSpawn(UnitSpawnEvent evt)
         {
             aliveUnits.Add(evt.Unit);
+        }
+        private void HandleActionSelected(ActionSelectedEvent evt)
+        {
+            activeAction = evt.Action;
+            if (!activeAction.RequiresClickToActivate)
+            {
+                ActivateAction(new RaycastHit());
+            }
         }
 
         private void Update()
@@ -108,7 +122,7 @@ namespace GameDevTV.RTS.Player
         private void HandleMouseUp()
         {
             //Keep adding unit if shift key is pressed. Drag or click will still add new units
-            if (!Keyboard.current.shiftKey.isPressed)
+            if (!wasMouseDownOnUI && activeAction == null && !Keyboard.current.shiftKey.isPressed)
             {
                 DeselectAllUnits();
             }
@@ -121,8 +135,14 @@ namespace GameDevTV.RTS.Player
             }
             selectionBox.gameObject.SetActive(false);
         }
+
         private void HandleMouseDrag()
         {
+            if (activeAction != null || wasMouseDownOnUI)
+            {
+                return;
+            }
+
             Bounds selectionBoxBounds = ResizeSelectionBox();
             foreach (AbstractUnit unit in aliveUnits)
             {
@@ -139,6 +159,9 @@ namespace GameDevTV.RTS.Player
             selectionBox.gameObject.SetActive(true);
             startingMousePosition = Mouse.current.position.ReadValue();
             addedUnits.Clear();
+
+            //This is to make sure that the previous click is in the UI to prevent deselecting
+            wasMouseDownOnUI = EventSystem.current.IsPointerOverGameObject();
         }
 
         //Copy to currentlySelectedUnits to avoid modifying(removing units) from the
@@ -168,7 +191,6 @@ namespace GameDevTV.RTS.Player
 
         private void HandleRightClick()
         {
-            //moveable can be used as a variable past this if check
             if (selectedUnits.Count == 0)
             {
                 return;
@@ -187,41 +209,22 @@ namespace GameDevTV.RTS.Player
                         abstractUnits.Add(unit);
                     }
                 }
-                int layer = 0;
-                int unitsOnLayer = 0;
-                int maxUnitsOnLayer = 1;
-                float circleRadius = 0;
-                float radialOffset = 0;
 
-                foreach (AbstractUnit unit in abstractUnits)
+                //Will this do everything on the AvailableCommand on each unit?
+                for (int i = 0; i < abstractUnits.Count; i++)
                 {
-                    Vector3 targetPosition = new(
-                        hit.point.x + circleRadius * Mathf.Cos(radialOffset * unitsOnLayer),
-                        hit.point.y,
-                        hit.point.z + circleRadius * Mathf.Sin(radialOffset * unitsOnLayer)
-                    );
+                    //i is UnitIndex on CommandContext
+                    CommandContext context = new(abstractUnits[i], hit, i);
 
-                    unit.MoveTo(targetPosition);
-                    unitsOnLayer++;
-
-                    if (unitsOnLayer >= maxUnitsOnLayer)
+                    foreach (ICommand command in abstractUnits[i].AvailableCommands)
                     {
-                        layer++;
-                        unitsOnLayer = 0;
-                        circleRadius += unit.AgentRadius * 3.5f;
-                        maxUnitsOnLayer = Mathf.FloorToInt(2 * Mathf.PI * circleRadius / (unit.AgentRadius * 2));
-                        radialOffset = 2 * Mathf.PI / maxUnitsOnLayer;
+                        if (command.CanHandle(context))
+                        {
+                            command.Handle(context);
+                            break;
+                        }
                     }
                 }
-
-
-                /*foreach(ISelectable selectable in selectedUnits)
-                {
-                    if (selectable is IMoveable moveable)
-                    {
-                        moveable.MoveTo(hit.point);
-                    }
-                }*/
             }
         }
 
@@ -234,12 +237,36 @@ namespace GameDevTV.RTS.Player
 
             Ray cameraRay = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
 
-            //Deselect first and then reselect to prevent same unit not selected if we clicked the same unit
-            if (Physics.Raycast(cameraRay, out RaycastHit hit, float.MaxValue, selectableUnitsLayers)
+            if (activeAction == null 
+                && Physics.Raycast(cameraRay, out RaycastHit hit, float.MaxValue, selectableUnitsLayers)
                 && hit.collider.TryGetComponent(out ISelectable selectable))
             {
                 selectable.Select();
             }
+
+            //Used when choosing action from the UI and clicking on the floor(For now prob) to tell where to do that action 
+            else if (activeAction != null
+                && !EventSystem.current.IsPointerOverGameObject() //Prevent from Unit to move where the mouse is when on the UI when selecting an action
+                && Physics.Raycast(cameraRay, out hit, float.MaxValue, floorLayers))
+            {
+                ActivateAction(hit);
+            }
+        }
+
+        private void ActivateAction(RaycastHit hit)
+        {
+            List<AbstractCommandable> abstractCommandables = selectedUnits
+               .Where((unit) => unit is AbstractCommandable)
+               .Cast<AbstractCommandable>()
+               .ToList();
+
+            for (int i = 0; i < abstractCommandables.Count; i++)
+            {
+                CommandContext context = new(abstractCommandables[i], hit, i);
+                activeAction.Handle(context);
+            }
+
+            activeAction = null;
         }
 
         private void HandleRotation()

@@ -1,0 +1,48 @@
+3.5 :
+- Instead of using SupplyHut the lecture suggest making a BaseBuilding script. I keep the SupplyHut script 
+just in case it's needed later, but now use the BaseBuilding script for the SupplyHut and the new Command Post
+3.6 : 
+- Use Command Pattern to store actions that units can do with the input by the player. ICommand can check with bool return
+if the command action can be handled.
+- The AbstractCommandable shold store each available commands
+- Since ICommand is an interface, it wont show on the inspector. Make a new class (ActionBase) that inherits ICommand and
+ScriptableObject. This will be used on AbstractCommandable to store commands. ActionBase also act as the parent for other commands (MoveCommand at this stage)
+- At this lecture, comment the Unit Circle on the Player Input right click function(For now) just to easily test if the command action.
+3.7 : 
+- Create CommmandContext that acts as a parameter for ICommand's and ActionBase's action handler
+- It seems like the PlayerInput Right click input will reiterate every single command that the unit has. Might be
+changed at later lecture
+3.8 :
+- Using HashSet on ActionsUI because the order doesnt matters. This is placed on the ActionsContainer on RuntimeUI
+- Units when selected is set to be ISelectable, so in ActionsUI you need to convert it to AbstractCommandable
+3.9 : 
+- Check on how UnityAction works on the UIActionButton. This is used as a delegate for the ActionSelectedEvent which added
+to the event bus
+- The HandleLeftClick now is being used for doing action if the target is floor layer (For now) after choosing an action
+in the UI
+- To check if clicking to the UI is seperate from clicking to the world. Make a bool and check by using
+EventSystem.current.IsPointerOverGameObject();. This is used to prevent deselecting when left clicking
+3.10 : 
+- A thing to remember. There's two way for any action is activated in PlayerInput for units. The right click button which default to move (?) and on the
+ActivateAction function. The ActivateAction is used on the HandleLeftClick after picking an action that needs left clik to the ground from the UI (Move).
+The other one is actions that doesn't need any left click input later like building a new unit which only need left click to the UI button and not elsewhere
+3.11 :
+- Use queue to queue up building new units. Pretty simple but could be useful in the future
+- Just to remind myself, wasMouseDownOnUI is used to check if the mouse is being clicked on the UI or the floor. Different thing may happen 
+for example left clicking the UI after selecting a Unit will not deselect them. This is used so that the unit can access actions on the UI
+3.12 :
+- Another interface that needs to accept generics. This is used for the IUIElement so that each child needs to have an object as a parameter to use them
+- Refactor the ActionsUI to not subscribe the UnitSelectedEvent/deselect. The ActionsUI only care about handling which action is available and enable them on UI
+not the select and deselect part
+- The event of UnitSelectedEvent/deselect will be handled on RuntimeUI. This class will hold the ActionsUI as its variable.
+- Overload the IUIElement by making a class with the same name but added callback for the UIActionButton
+3.13 :
+- The progress bar is calculated differntly here and need padding to fit in with the UI. This is beacuse the bar is using "Tiled" image type
+- I copy the non padded progress bar into another function and commented it, this will work but doesnt fit in with the UI.
+3.14 :
+- Use event on BaseBuilding to give information regarding the buildingQueue variable information for the BuildingBuildingUI
+- Coroutine can be stored as a variable and on BuildingBuildingUI, its used to making sure only one coroutine is running at all time. 
+Set this coroutine to null when the building progress is finished
+3.15 :
+- ToArray() will return copy of the original array / queue. This means that it will prevent manipulation from other script when the original queue is processing.
+- Because the player can cancel a unit in the middle of a queue, change the queue to liswt for the BaseBuilding
