@@ -1,14 +1,18 @@
 using GameDevTV.RTS.EventBus;
 using GameDevTV.RTS.Events;
+using Unity.Behavior;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace GameDevTV.RTS.Units
 {
-    [RequireComponent(typeof(NavMeshAgent))]
+    [RequireComponent(typeof(NavMeshAgent), typeof(BehaviorGraphAgent))]
     public abstract class AbstractUnit : AbstractCommandable, IMoveable
     {
         //[SerializeField] private Transform target;
+
+        private BehaviorGraphAgent graphAgent;
+
         public float AgentRadius
         {
             get { return agent.radius; }
@@ -19,6 +23,7 @@ namespace GameDevTV.RTS.Units
         private void Awake()
         {
             agent = GetComponent<NavMeshAgent>();
+            graphAgent = GetComponent<BehaviorGraphAgent>();
         }
         protected override void Start()
         {
@@ -28,15 +33,8 @@ namespace GameDevTV.RTS.Units
 
         public void MoveTo(Vector3 position)
         {
-            agent.SetDestination(position);
+            graphAgent.SetVariableValue("TargetLocation", position);
+            //agent.SetDestination(position);
         }
-
-        /*private void Update()
-        {
-            if (target != null)
-            {
-                agent.SetDestination(target.position);
-            }
-        }*/
     }
 }
