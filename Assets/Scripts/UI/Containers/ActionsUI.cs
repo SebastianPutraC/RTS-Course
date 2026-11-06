@@ -1,25 +1,25 @@
 using GameDevTV.RTS.Commands;
 using GameDevTV.RTS.EventBus;
 using GameDevTV.RTS.Events;
+using GameDevTV.RTS.UI.Components;
 using GameDevTV.RTS.Units;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace GameDevTV.RTS.UI
+namespace GameDevTV.RTS.UI.Containers
 {
-    public class ActionsUI : MonoBehaviour
+    public class ActionsUI : MonoBehaviour, IUIElement<HashSet<AbstractCommandable>>
     {
         [SerializeField] private UIActionButton[] ActionButtons;
-        private HashSet<AbstractCommandable> selectedUnits = new(12);
 
-        private void Awake()
+        public void EnableFor(HashSet<AbstractCommandable> selectedUnits)
         {
-            Bus<UnitSelectedEvent>.OnEvent += HandleUnitSelected;
-            Bus<UnitDeselectedEvent>.OnEvent += HandleUnitDeselected;
+            RefreshButtons(selectedUnits);
         }
-        private void Start()
+
+        public void Disable()
         {
             foreach (UIActionButton actionButton in ActionButtons)
             {
@@ -27,30 +27,7 @@ namespace GameDevTV.RTS.UI
             }
         }
 
-        private void OnDestroy()
-        {
-            Bus<UnitSelectedEvent>.OnEvent -= HandleUnitSelected;
-            Bus<UnitDeselectedEvent>.OnEvent -= HandleUnitDeselected;
-        }
-
-        private void HandleUnitSelected(UnitSelectedEvent evt)
-        {
-            if (evt.Unit is AbstractCommandable commandable)
-            {
-                selectedUnits.Add(commandable);
-                RefreshButtons();
-            }
-        }
-
-        private void HandleUnitDeselected(UnitDeselectedEvent evt)
-        {
-            if (evt.Unit is AbstractCommandable commandable)
-            {
-                selectedUnits.Remove(commandable);
-                RefreshButtons();
-            }
-        }
-        private void RefreshButtons()
+        private void RefreshButtons(HashSet<AbstractCommandable> selectedUnits)
         {
             HashSet<ActionBase> availableCommands = new(9);
 
@@ -79,5 +56,7 @@ namespace GameDevTV.RTS.UI
         {
             return () => Bus<ActionSelectedEvent>.Raise(new ActionSelectedEvent(action));
         }
+
+        
     }
 }

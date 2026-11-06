@@ -30,3 +30,10 @@ The other one is actions that doesn't need any left click input later like build
 - Use queue to queue up building new units. Pretty simple but could be useful in the future
 - Just to remind myself, wasMouseDownOnUI is used to check if the mouse is being clicked on the UI or the floor. Different thing may happen 
 for example left clicking the UI after selecting a Unit will not deselect them. This is used so that the unit can access actions on the UI
+3.12 :
+- Another interface that needs to accept generics. This is used for the IUIElement so that each child needs to have an object as a parameter to use them
+- Refactor the ActionsUI to not subscribe the UnitSelectedEvent/deselect. The ActionsUI only care about handling which action is available and enable them on UI
+not the select and deselect part
+- The event of UnitSelectedEvent/deselect will be handled on RuntimeUI. This class will hold the ActionsUI as its variable.
+- Overload the IUIElement by making a class with the same name but added callback for the UIActionButton
+
