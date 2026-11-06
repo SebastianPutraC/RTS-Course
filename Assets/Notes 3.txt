@@ -36,4 +36,6 @@ for example left clicking the UI after selecting a Unit will not deselect them. 
 not the select and deselect part
 - The event of UnitSelectedEvent/deselect will be handled on RuntimeUI. This class will hold the ActionsUI as its variable.
 - Overload the IUIElement by making a class with the same name but added callback for the UIActionButton
-
+3.13 :
+- The progress bar is calculated differntly here and need padding to fit in with the UI. This is beacuse the bar is using "Tiled" image type
+- I copy the non padded progress bar into another function and commented it, this will work but doesnt fit in with the UI.
