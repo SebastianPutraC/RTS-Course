@@ -7500,6 +7500,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameDevTV.RTS.UI.RuntimeUI
   actionsUI: {fileID: 1741608388}
+  buildingBuildingUI: {fileID: 1619984283}
 --- !u!1001 &646904507
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21330,6 +21331,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1619984282}
+  - component: {fileID: 1619984283}
   m_Layer: 5
   m_Name: Building In Progress Container
   m_TagString: Untagged
@@ -21364,6 +21366,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1619984283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1619984281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad232185277b98d4c9ae60e550ba63af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameDevTV.RTS.UI.Containers.BuildingBuildingUI
+  progressBar: {fileID: 684018148024924125}
 --- !u!1 &1621070753
 GameObject:
   m_ObjectHideFlags: 0
@@ -28871,6 +28886,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 599856f3bd9a1614f9c0db64f2ddcacd, type: 3}
+--- !u!114 &684018148024924125 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9068190537855959836, guid: 599856f3bd9a1614f9c0db64f2ddcacd, type: 3}
+  m_PrefabInstance: {fileID: 684018148024924124}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67eeb20cd4ccfe74f9aa55606a8098ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameDevTV.RTS.UI.Components.ProgressBar
 --- !u!1001 &3327223654149646776
 PrefabInstance:
   m_ObjectHideFlags: 0

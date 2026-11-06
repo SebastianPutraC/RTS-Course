@@ -1,14 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.UI.CanvasScaler;
 
 namespace GameDevTV.RTS.Units
 {
     public class BaseBuilding : AbstractCommandable
     {
+        public int QueueSize => buildingQueue.Count;
+        [field: SerializeField] public float CurrentQueueStartTime { get; private set; }
+        [field: SerializeField] public UnitSO BuildingUnit { get; private set; }
         private Queue<UnitSO> buildingQueue = new (MAX_QUEUE_SIZE);
         private const int MAX_QUEUE_SIZE = 5;
+
+        public delegate void QueueUpdatedEvent(UnitSO[] unitsInQueue);
+        public event QueueUpdatedEvent OnQueueUpdated;
 
         public void BuildUnit(UnitSO unit)
         {
@@ -23,17 +28,30 @@ namespace GameDevTV.RTS.Units
             {
                 StartCoroutine(DoBuildUnit());
             }
+            //Make sure to invoke this when a unit is done building but there's another units to be built 
+            else
+            {
+                OnQueueUpdated?.Invoke(buildingQueue.ToArray());
+            }
         }
 
         private IEnumerator DoBuildUnit()
         {
             while (buildingQueue.Count > 0)
             {
-                UnitSO newUnit = buildingQueue.Peek();
-                yield return new WaitForSeconds(newUnit.BuildTime);
-                Instantiate(newUnit.Prefab, transform.position, Quaternion.identity);
+                BuildingUnit = buildingQueue.Peek();
+                CurrentQueueStartTime = Time.time;
+                //Used to check the building queue information
+                OnQueueUpdated?.Invoke(buildingQueue.ToArray());
+
+                yield return new WaitForSeconds(BuildingUnit.BuildTime);
+
+                Instantiate(BuildingUnit.Prefab, transform.position, Quaternion.identity);
                 buildingQueue.Dequeue();
+                OnQueueUpdated?.Invoke(buildingQueue.ToArray());
             }
+
+            OnQueueUpdated?.Invoke(buildingQueue.ToArray());
         }
     }
 }
