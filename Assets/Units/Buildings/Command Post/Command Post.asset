@@ -13,3 +13,6 @@ MonoBehaviour:
   m_Name: Command Post
   m_EditorClassIdentifier: Assembly-CSharp::GameDevTV.RTS.Units.UnitSO
   <Health>k__BackingField: 400
+  <Prefab>k__BackingField: {fileID: 1589499662120937400, guid: 43943267dde60fe4a88cf5bd885c00e3, type: 3}
+  <BuildTime>k__BackingField: 5
+  <Icon>k__BackingField: {fileID: 21300000, guid: dfebbdf93f58d764ab9aa4d54edd629e, type: 3}
