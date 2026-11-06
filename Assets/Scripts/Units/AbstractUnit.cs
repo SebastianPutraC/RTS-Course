@@ -24,11 +24,13 @@ namespace GameDevTV.RTS.Units
         {
             agent = GetComponent<NavMeshAgent>();
             graphAgent = GetComponent<BehaviorGraphAgent>();
+            MoveTo(transform.position);
         }
         protected override void Start()
         {
             base.Start();
             Bus<UnitSpawnEvent>.Raise(new UnitSpawnEvent(this));
+            MoveTo(transform.position);
         }
 
         public void MoveTo(Vector3 position)

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1715156035423810196}
   - component: {fileID: 156581915902003394}
   - component: {fileID: 9155364156011227713}
+  - component: {fileID: -6197641605185085033}
   m_Layer: 0
   m_Name: Gas
   m_TagString: Untagged
@@ -72,6 +73,21 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0.15, y: 0, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &-6197641605185085033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2281804471223176727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e75b5a053ccf6e341b4f5aa7640d2b40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameDevTV.RTS.Environment.GatherableSupply
+  <Supply>k__BackingField: {fileID: 11400000, guid: feb94721b39191f43b25297d542b6fb4, type: 2}
+  <Amount>k__BackingField: 0
+  <IsBusy>k__BackingField: 0
 --- !u!1001 &2685076412139502142
 PrefabInstance:
   m_ObjectHideFlags: 0
